@@ -1,6 +1,6 @@
 {
   "name": "nestjs-reverse-engineering",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A powerful TypeScript/NestJS library for database reverse engineering, entity generation, and CRUD operations",
   "author": "Your Name <your.email@example.com>",
   "private": false,
@@ -31,11 +31,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/nestjs-reverse-engineering.git"
+    "url": "https://github.com/SuryaDivami/reverse-engineering.git"
   },
-  "homepage": "https://github.com/your-org/nestjs-reverse-engineering#readme",
+  "homepage": "https://github.com/SuryaDivami/reverse-engineering#readme",
   "bugs": {
-    "url": "https://github.com/your-org/nestjs-reverse-engineering/issues"
+    "url": "https://github.com/SuryaDivami/reverse-engineering/issues"
   },
   "scripts": {
     "build": "tsc -p tsconfig.lib.json && npm run build:cli",
