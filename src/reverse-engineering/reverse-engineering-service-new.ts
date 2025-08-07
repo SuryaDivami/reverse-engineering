@@ -51,15 +51,24 @@ export class ReverseEngineeringService {
   private async createDataSource(dbConfig: DatabaseConfig): Promise<DataSource> {
     const { DataSource } = await import('typeorm');
     
+    // Ensure password is a string
+    const sanitizedConfig = {
+      ...dbConfig,
+      password: String(dbConfig.password || ''),
+      port: Number(dbConfig.port) || 5432
+    };
+    
+    console.log(`🔌 Connecting to ${sanitizedConfig.type}://${sanitizedConfig.username}@${sanitizedConfig.host}:${sanitizedConfig.port}/${sanitizedConfig.database}`);
+    
     return new DataSource({
-      type: dbConfig.type as any,
-      host: dbConfig.host,
-      port: dbConfig.port,
-      username: dbConfig.username,
-      password: dbConfig.password,
-      database: dbConfig.database,
-      schema: dbConfig.schema,
-      ssl: dbConfig.ssl,
+      type: sanitizedConfig.type as any,
+      host: sanitizedConfig.host,
+      port: sanitizedConfig.port,
+      username: sanitizedConfig.username,
+      password: sanitizedConfig.password,
+      database: sanitizedConfig.database,
+      schema: sanitizedConfig.schema,
+      ssl: sanitizedConfig.ssl,
       entities: [],
       synchronize: false,
     });
@@ -206,6 +215,7 @@ export class ReverseEngineeringService {
     }
 
     console.log('🔄 Starting SQL generation process...');
+    console.log(`📁 Output path: ${config.paths.sql}`);
 
     // Create or use existing data source
     const dataSource = this.dataSource || await this.createDataSource(config.database);
@@ -223,8 +233,21 @@ export class ReverseEngineeringService {
       const sqlGenerator = new SqlGenerator();
       const result = await sqlGenerator.generateCreateTableScripts(schema.tables);
 
+      // Create output directory
+      const fs = await import('fs');
+      const path = await import('path');
+      
+      if (!fs.existsSync(config.paths.sql)) {
+        fs.mkdirSync(config.paths.sql, { recursive: true });
+      }
+
+      // Write CREATE TABLE scripts
+      const createTablesFile = path.join(config.paths.sql, 'create-tables.sql');
+      fs.writeFileSync(createTablesFile, result.sql);
+      console.log(`📄 Created: ${createTablesFile}`);
+
       console.log(`✅ SQL generation completed!`);
-      console.log(`📁 Generated SQL scripts`);
+      console.log(`📁 Generated ${result.tableCount} table scripts in ${config.paths.sql}`);
 
     } finally {
       if (!this.dataSource && dataSource.isInitialized) {

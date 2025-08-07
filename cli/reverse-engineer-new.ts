@@ -24,12 +24,20 @@ function loadConfig(): Partial<ReverseEngineeringConfigInput> | null {
     if (fs.existsSync(configPath)) {
       console.log(`📄 Loading configuration from ${configPath}`);
       try {
+        let config: any;
         if (configPath.endsWith('.json')) {
-          return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+          config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         } else {
           delete require.cache[require.resolve(path.resolve(configPath))];
-          return require(path.resolve(configPath));
+          config = require(path.resolve(configPath));
         }
+        
+        // Ensure database password is a string
+        if (config.database && config.database.password !== undefined) {
+          config.database.password = String(config.database.password);
+        }
+        
+        return config;
       } catch (error) {
         console.warn(`⚠️  Failed to load config from ${configPath}:`, error.message);
       }
@@ -41,16 +49,19 @@ function loadConfig(): Partial<ReverseEngineeringConfigInput> | null {
 
 // Create database configuration from CLI options
 function createDatabaseConfig(options: any): any {
-  return {
-    type: options.dialect || 'postgres',
-    host: options.host || 'localhost',
-    port: parseInt(options.port) || (options.dialect === 'mysql' ? 3306 : 5432),
-    username: options.username || options.user || 'postgres',
-    password: options.password,
-    database: options.database,
-    schema: options.schema,
-    ssl: options.ssl
-  };
+  const config: any = {};
+  
+  // Only add properties that are actually provided via CLI (not defaults)
+  if (options.dialect && options.dialect !== 'postgres') config.type = options.dialect;
+  if (options.host && options.host !== 'localhost') config.host = options.host;
+  if (options.port) config.port = parseInt(options.port);
+  if (options.username || options.user) config.username = options.username || options.user;
+  if (options.password) config.password = String(options.password);
+  if (options.database) config.database = options.database;
+  if (options.schema) config.schema = options.schema;
+  if (options.ssl) config.ssl = options.ssl;
+  
+  return config;
 }
 
 // Main program configuration
@@ -61,19 +72,19 @@ program
 
 // Global options
 program
-  .option('-h, --host <host>', 'Database host', 'localhost')
+  .option('-h, --host <host>', 'Database host')
   .option('-p, --port <port>', 'Database port')
   .option('-u, --username <username>', 'Database username')
   .option('-w, --password <password>', 'Database password')
   .option('-d, --database <database>', 'Database name')
   .option('-s, --schema <schema>', 'Database schema')
-  .option('--dialect <dialect>', 'Database dialect (postgres|mysql)', 'postgres')
+  .option('--dialect <dialect>', 'Database dialect (postgres|mysql)')
   .option('--ssl', 'Use SSL connection')
   .option('--config <path>', 'Configuration file path')
-  .option('--output-dir <dir>', 'Base output directory', './src')
-  .option('--entities-dir <dir>', 'Entities directory', './src/entities')
-  .option('--sql-dir <dir>', 'SQL output directory', './sql')
-  .option('--data-dir <dir>', 'Data export directory', './data');
+  .option('--output-dir <dir>', 'Base output directory')
+  .option('--entities-dir <dir>', 'Entities directory')
+  .option('--sql-dir <dir>', 'SQL output directory')
+  .option('--data-dir <dir>', 'Data export directory');
 
 // Command: Generate entities
 program
@@ -335,17 +346,17 @@ program
         paths: {
           baseOutput: globalOptions.outputDir || fileConfig.paths?.baseOutput || './src',
           entities: globalOptions.entitiesDir || fileConfig.paths?.entities || './src/entities',
-          crud: globalOptions.outputDir || fileConfig.paths?.crud || './src',
+          crud: fileConfig.paths?.crud || globalOptions.outputDir || './src',
           sql: globalOptions.sqlDir || fileConfig.paths?.sql || './sql',
           dataExport: globalOptions.dataDir || fileConfig.paths?.dataExport || './data'
         },
         features: {
-          entities: !options.skipEntities,
-          crud: !options.skipCrud,
-          sql: !options.skipSql,
-          dataExport: !options.skipData,
-          generateIndex: !options.skipEntities,
-          ...fileConfig.features
+          ...fileConfig.features,
+          entities: fileConfig.features?.entities !== false && !options.skipEntities,
+          crud: fileConfig.features?.crud !== false && !options.skipCrud,
+          sql: fileConfig.features?.sql !== false && !options.skipSql,
+          dataExport: fileConfig.features?.dataExport !== false && !options.skipData,
+          generateIndex: fileConfig.features?.generateIndex !== false && !options.skipEntities
         }
       };
 

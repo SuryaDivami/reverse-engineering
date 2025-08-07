@@ -1,6 +1,6 @@
 {
-  "name": "@your-org/nestjs-reverse-engineering",
-  "version": "1.0.0",
+  "name": "nestjs-reverse-engineering",
+  "version": "0.0.2",
   "description": "A powerful TypeScript/NestJS library for database reverse engineering, entity generation, and CRUD operations",
   "author": "Your Name <your.email@example.com>",
   "private": false,

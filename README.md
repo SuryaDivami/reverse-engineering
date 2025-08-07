@@ -19,9 +19,9 @@ A powerful, configurable TypeScript/NestJS library for database reverse engineer
 ## 📦 Installation
 
 ```bash
-npm install @your-org/nestjs-reverse-engineering
+npm install nestjs-reverse-engineering
 # or
-yarn add @your-org/nestjs-reverse-engineering
+yarn add nestjs-reverse-engineering
 ```
 
 ## 🛠️ Quick Start
