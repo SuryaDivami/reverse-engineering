@@ -443,14 +443,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🐛 Issues & Support
 
-For issues, questions, or contributions, please visit our [GitHub repository](https://github.com/your-org/nestjs-reverse-engineering).
+For issues, questions, or contributions, please visit our [GitHub repository](https://github.com/SuryaDivami/reverse-engineering).
 
 ## 📚 Additional Resources
 
 - [NestJS Documentation](https://docs.nestjs.com/)
 - [TypeORM Documentation](https://typeorm.io/)
-- [Database Design Best Practices](https://www.example.com)
 
----
-
-**Made with ❤️ by [Your Organization](https://github.com/your-org)**
