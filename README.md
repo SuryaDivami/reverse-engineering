@@ -54,7 +54,7 @@ npx nestjs-reverse-engineering test
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { ReverseEngineeringModule } from '@your-org/nestjs-reverse-engineering';
+import { ReverseEngineeringModule } from 'nestjs-reverse-engineering';
 
 @Module({
   imports: [
@@ -80,7 +80,7 @@ export class AppModule {}
 ### 3. Programmatic Usage
 
 ```typescript
-import { ReverseEngineeringService } from '@your-org/nestjs-reverse-engineering';
+import { ReverseEngineeringService } from 'nestjs-reverse-engineering';
 
 const service = new ReverseEngineeringService({
   database: {
@@ -311,7 +311,7 @@ src/
 ### Custom Entity Templates
 
 ```typescript
-import { ReverseEngineeringService } from '@your-org/nestjs-reverse-engineering';
+import { ReverseEngineeringService } from 'nestjs-reverse-engineering';
 
 const service = new ReverseEngineeringService(config);
 
@@ -357,7 +357,7 @@ const service = new ReverseEngineeringService(customConfig);
 ### Dynamic Configuration
 
 ```typescript
-import { ReverseEngineeringModule } from '@your-org/nestjs-reverse-engineering';
+import { ReverseEngineeringModule } from 'nestjs-reverse-engineering';
 
 @Module({
   imports: [
@@ -381,7 +381,7 @@ export class AppModule {}
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { ReverseEngineeringService } from '@your-org/nestjs-reverse-engineering';
+import { ReverseEngineeringService } from 'nestjs-reverse-engineering';
 
 @Injectable()
 export class MyService {
@@ -401,7 +401,7 @@ The library includes comprehensive testing utilities:
 
 ```typescript
 import { Test } from '@nestjs/testing';
-import { ReverseEngineeringModule } from '@your-org/nestjs-reverse-engineering';
+import { ReverseEngineeringModule } from 'nestjs-reverse-engineering';
 
 describe('Generated Modules', () => {
   beforeEach(async () => {
